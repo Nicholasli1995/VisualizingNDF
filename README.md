@@ -3,10 +3,10 @@ The repository contains pre-trained model and code for visualizing deep neural d
 (This repository is Under preparation and will be released soon)
 
 <div align="center">
-    <img src=".images/mnist_results.png">
+    <img src="images/mnist_results.png">
 </div>
 <div align="center">
-    <img src=".images/cifar10_results.png">
+    <img src="images/cifar10_results.png">
 </div>
 ## Citation
 Please cite the paper in your publications if it helps your research:
