@@ -1,6 +1,6 @@
 # VisualizingNDF
 The repository contains pre-trained model and code for visualizing deep neural decisoin forest.
-(This repository is Under preparation and will be released soon)
+(This repository is under preparation and will be released before CVPR 2019 takes place)
 
 <div align="center">
     <img src="images/mnist_results.png">
