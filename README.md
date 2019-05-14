@@ -9,6 +9,10 @@ The repository contains pre-trained model and code for visualizing deep neural d
     <img src="images/cifar10_results.png">
 </div>
 
+## Requirements
+* Python 3.6 (not tested for other versions)
+* PyTorch 1.0 
+
 ## Citation
 Please cite the paper in your publications if it helps your research:
 
