@@ -2,6 +2,12 @@
 The repository contains pre-trained model and code for visualizing deep neural decisoin forest.
 (This repository is Under preparation and will be released soon)
 
+<div align="center">
+    <img src=".images/mnist_results.pdf.pdf", width="300">
+</div>
+<div align="center">
+    <img src=".images/cifar10_results.pdf.pdf", width="300">
+</div>
 ## Citation
 Please cite the paper in your publications if it helps your research:
 
