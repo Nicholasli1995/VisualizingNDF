@@ -31,7 +31,7 @@ python ndf_vis.py -dataset 'mnist'
 ## Train
 To train a neural decision forest for CIFAR-10, use 
 ```bash
-python main.py.
+python main.py
 ```
 For MNIST, run 
 ```bash
