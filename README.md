@@ -1,6 +1,6 @@
 # VisualizingNDF
 The repository contains pre-trained model and code for visualizing deep neural decisoin forest.
-(This repository is under preparation and will be released before CVPR 2019 takes place)
+(This repository is a beta version with more comments to write and more cleaning-up to do.)
 
 <div align="center">
     <img src="images/mnist_results.png">
@@ -12,6 +12,14 @@ The repository contains pre-trained model and code for visualizing deep neural d
 ## Requirements
 * Python 3.6 (not tested for other versions)
 * PyTorch 1.0 
+
+## Visualization
+simply run python ndf_vis.py for CIFAR-10.
+For MNIST, run python ndf_vis.py -dataset 'mnist'.
+
+## Train
+To train a neural decision forest for CIFAR-10, use python main.py.
+For MNIST, run python main.py -dataset 'mnist' -epochs 50.
 
 ## Citation
 Please cite the paper in your publications if it helps your research:
