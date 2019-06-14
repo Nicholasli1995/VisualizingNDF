@@ -13,11 +13,17 @@ The repository contains pre-trained model and code for visualizing deep neural d
 * Python 3.6 (not tested for other versions)
 * PyTorch 1.0 
 
+## Pre-trained models
+You can download the pre-trained models at https://drive.google.com/drive/folders/1DM6wVSknkYBqGf1UwHQgJNUp40sYDMrv?usp=sharing and place them in the "pre-trained" folder.
+
 ## Visualization
+After downloading the pre-trained models,
 simply run 
 ```bash
-python ndf_vis.py for CIFAR-10.
+python ndf_vis.py 
 ```
+for CIFAR-10.
+
 For MNIST, run 
 ```bash
 python ndf_vis.py -dataset 'mnist'
