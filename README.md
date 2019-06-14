@@ -14,13 +14,23 @@ The repository contains pre-trained model and code for visualizing deep neural d
 * PyTorch 1.0 
 
 ## Visualization
-simply run python ndf_vis.py for CIFAR-10.
-For MNIST, run python ndf_vis.py -dataset 'mnist'.
-
+simply run 
+```bash
+python ndf_vis.py for CIFAR-10.
+```
+For MNIST, run 
+```bash
+python ndf_vis.py -dataset 'mnist'
+```
 ## Train
-To train a neural decision forest for CIFAR-10, use python main.py.
-For MNIST, run python main.py -dataset 'mnist' -epochs 50.
-
+To train a neural decision forest for CIFAR-10, use 
+```bash
+python main.py.
+```
+For MNIST, run 
+```bash
+python main.py -dataset 'mnist' -epochs 50
+```
 ## Citation
 Please cite the paper in your publications if it helps your research:
 
