@@ -1,6 +1,6 @@
 # VisualizingNDF
 The repository contains pre-trained model and code for visualizing deep neural decisoin forest.
-(This repository is a beta version with more comments to write and more cleaning-up to do.)
+(This repository is a beta version with more comments to write and more cleaning-up to do.) For now only classification models are released and you can contact me if you are interested in the regression models.
 
 <div align="center">
     <img src="images/mnist_results.png">
