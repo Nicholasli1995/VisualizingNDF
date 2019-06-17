@@ -1,11 +1,12 @@
 """
-some utiliy functions.
+some utiliy functions for data processing and visualization.
 """
 import matplotlib.pyplot as plt
 from matplotlib.patches import ConnectionPatch
 import numpy as np
 import torch
 
+# class name for CIFAR-10 dataset
 cifar10_class_name = ['airplane', 'automobile', 'bird', 'cat', 'deer', 'dog', 
                       'frog', 'horse', 'ship', 'truck']
 
@@ -38,18 +39,20 @@ def get_sample(dataset, sample_num, name):
     # random seed
     #np.random.seed(2019)
     """
-    get a batch of random sample images from the dataset
+    get a batch of random images from the dataset
     args:
-        dataset: dataset to use
-        sample_num: number of samples
+        dataset: Pytorch dataset object to use
+        sample_num: number of samples to draw
         name: name of the dataset
     return:
-        selected sample
+        selected sample tensor
     """
+    # get random indices
     indices = np.random.choice(list(range(len(dataset))), sample_num)
     if name in ['mnist', 'cifar10']:
         # for MNIST and CIFAR-10 dataset
         sample = [dataset[indices[i]][0].unsqueeze(0) for i in range(len(indices))]
+        # concatenate the samples as one tensor
         sample = torch.cat(sample, dim = 0)
     else:
         raise ValueError     
@@ -57,12 +60,12 @@ def get_sample(dataset, sample_num, name):
 
 def revert_preprocessing(data_tensor, name):
     """
-    unnormalize the data tensor
+    unnormalize the data tensor by multiplying the standard deviation and adding the mean.
     args:
         data_tensor: input data tensor
-        name
+        name: name of the dataset
     return:
-        data_tensor: processed data tensor
+        data_tensor: unnormalized data tensor
     """
     if name == 'mnist':
         data_tensor = data_tensor*0.3081 + 0.1307
@@ -76,7 +79,7 @@ def revert_preprocessing(data_tensor, name):
 
 def normalize(gradient, name):
     """
-    normalize the gradient for display
+    normalize the gradient to a 0 to 1 range for display
     args:
         gradient: input gradent tensor
         name: name of the dataset
@@ -99,15 +102,15 @@ def normalize(gradient, name):
 
 def trace(record):
     """
-    get the most likely splitting nodes to visit and probabilities 
-    for one input sample
+    get the the path that is very likely to be visited by the input images. For each splitting node along the
+    path the probability of arriving at it is also computed.
     args:
         record: record of the routing probabilities of the splitting nodes
     return:
-        path: the most likely path
+        path: the very likely computational path
     """
     path = []
-    # probability of arriving at the root node
+    # probability of arriving at the root node is just 1
     prob = 1
     # the starting index 
     node_idx = 1
@@ -116,51 +119,80 @@ def trace(record):
         # find the children node with larger visiting probability
         if record[node_idx] >= 0.5:
             prob *= record[node_idx]
+            # go to left sub-tree
             node_idx = node_idx*2
         else:
             prob *= 1 - record[node_idx]
+            # go to right sub-tree
             node_idx = node_idx*2 + 1          
     return path
 
 def get_paths(dataset, model, tree_idx, name):
     """
     compute the computational paths for the input tensors
+    args:
+      dataset: Pytorch dataset object
+      model: pre-trained deep neural decision forest for visualizing
+      tree_idx: which tree to use if there are multiple trees in the forest. 
+      name: name of the dataset
+   return:
+      sample: randomly drawn sample
+      paths: computational paths for the samples
+      class_pred: model predictions for the samples
     """
     sample_num = 5
+    # get some random input images
     sample = get_sample(dataset, sample_num, name)   
-    # forward pass
+    # forward pass to get the routing probability
     pred, cache, _ = model(sample.cuda(), save_flag = True)
     class_pred = pred.max(dim=1)[1]
+    # for now use the first tree by cache[0]
+    # please refer to ndf.py if you are interested in how the forward pass is implemented
     decision = cache[0]['decision'].data.cpu().numpy()
     paths = []
+    # trace the computational path for every input image
     for sample_idx in range(len(decision)):
         paths.append(trace(decision[sample_idx, :]))
     return sample, paths, class_pred
 
 def get_node_saliency_map(dataset, model, tree_idx, node_idx, name):
+  """
+  get decision saliency maps for one specific splitting node
+  args:
+    dataset: Pytorch dataset object
+    model: pre-trained neural decision forest to visualize
+    tree_idx: index of the tree
+    node_idx: index of the splitting node
+    name: name of the dataset
+  return:
+    gradient: computed decision saliency maps
+  """
     # pick some samples from the dataset
     sample_num = 5
     sample = get_sample(dataset, sample_num, name)
-    # enable the gradient computation
+    # For now only GPU code is supported
     sample = sample.cuda()
+    # enable the gradient computation (the input tensor will requires gradient computation in the backward computational graph) 
     sample.requires_grad = True
-    # for NDF architecture
+    # get the feature vectors for the drawn samples
     feats = model.feature_layer(sample)
-    # note that the first using_idx is not used for ndf
+    # using_idx gives the indices of the neurons in the last FC layer that are used to compute routing probabilities 
     using_idx = model.forest.trees[tree_idx].using_idx[node_idx + 1]
 #    for sample_idx in range(len(feats)):
 #        feats[sample_idx, using_idx].backward(retain_graph=True)
-    # should be equivalent to the above one
+    # equivalent to the above commented one
     feats[:, using_idx].sum(dim = 0).backward()
-    # get the gradient
+    # get the gradient data
     gradient = sample.grad.data
-    # compute the magnitude
+    # get the magnitude
     gradient = torch.abs(gradient)
+    # normalize the gradient for visualizing
     gradient = normalize(gradient, name)
-    # plot the input data and their corresponding saliency maps
+    # plot the input data and their corresponding decison saliency maps
     plt.figure()
-    # revert pre-processing operations
+    # unnormalize the images for display
     sample = revert_preprocessing(sample, name)
+    # plot for every input image
     for sample_idx in range(sample_num):
         plt.subplot(2, sample_num, sample_idx + 1)
         sample_to_show = sample[sample_idx].squeeze().data.cpu().numpy()
@@ -179,8 +211,9 @@ def get_node_saliency_map(dataset, model, tree_idx, node_idx, name):
     return gradient
 
 def get_map(model, sample, node_idx, tree_idx, name):
-    # helper function for computing the saliency map for a specified sample
-    # and node
+"""
+helper function for computing the saliency map for a specified sample and node
+"""
     sample = sample.unsqueeze(dim=0).cuda()
     sample.requires_grad = True
     feat = model.feature_layer(sample)
@@ -249,5 +282,6 @@ def get_path_saliency(samples, paths, class_pred, model, tree_idx, name, orienta
                    # expressed as a fraction of the average axis height  
     plt.subplots_adjust(left, bottom, right, top, wspace, hspace)
     plt.show()
+    # save figure if you need
     #plt.savefig('saved_fig.png',dpi=1200)
     return
