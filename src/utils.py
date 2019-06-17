@@ -212,30 +212,59 @@ def get_node_saliency_map(dataset, model, tree_idx, node_idx, name):
 
 def get_map(model, sample, node_idx, tree_idx, name):
 """
-helper function for computing the saliency map for a specified sample and node
+helper function for computing the saliency map for a specified sample and splitting node
+args:
+    model: pre-trained neural decison forest to visualize
+    sample: input image tensors
+    node_idx: index of the splitting node
+    tree_idx: index of the decison tree
+    name:name of the dataset
+return:
+    saliency_map: computed decision saliency map
 """
+    # move to GPU
     sample = sample.unsqueeze(dim=0).cuda()
+    # enable gradient computation for the input tensor
     sample.requires_grad = True
+    # get feature vectors of the input samples
     feat = model.feature_layer(sample)
+    # using_idx gives the indices of the neurons in the last FC layer that are used to compute routing probabilities 
     using_idx = model.forest.trees[tree_idx].using_idx[node_idx]
+    # compute gradient by a backward pass
     feat[:, using_idx].backward()
+    # get the gradient data
     gradient = sample.grad.data
+    # normalize the gradient
     gradient = normalize(torch.abs(gradient), name)
     saliency_map = gradient.squeeze().cpu().numpy()
     return saliency_map
 
 def get_path_saliency(samples, paths, class_pred, model, tree_idx, name, orientation = 'horizontal'):
-    # show the saliency maps for the input samples with their 
-    # computational paths 
+"""  
+show the saliency maps for the input samples with their pre-computed computational paths 
+args:
+  samples: input image tensor
+  paths: pre-computed computational paths for the inputs
+  class_pred: model predictons for the inputs
+  model: pre-trained neural decison forest
+  tree_idx: index of the decision tree
+  name: name of the dataset
+  orientation: layout of the figure
+"""
     #plt.ioff()
+    # plotting parameters
     plt.figure(figsize=(20,5))
     plt.rcParams.update({'font.size': 12})
+    # number of input samples
     num_samples = len(samples)
+    # length of the computational path
     path_length = len(paths[0])
+    # iterate for every input sample
     for sample_idx in range(num_samples):
         sample = samples[sample_idx]
         # plot the sample
         plt.subplot(num_samples, path_length + 1, sample_idx*(path_length + 1) + 1)
+        # unnormalize the input
         sample_to_plot = revert_preprocessing(sample.unsqueeze(dim=0), name)
         if name == 'mnist':
             plt.imshow(sample_to_plot.squeeze().cpu().numpy(), cmap='gray')
@@ -245,12 +274,14 @@ def get_path_saliency(samples, paths, class_pred, model, tree_idx, name, orienta
             pred_class_name = cifar10_class_name[int(class_pred[sample_idx])]
         plt.axis('off')        
         plt.title('Pred:{:s}'.format(pred_class_name))
+        # computational path for this sample
         path = paths[sample_idx]
         for node_idx in range(path_length):
-            # compute and plot saliency for each node
+            # compute and plot decison saliency map for each splitting node along the path
             node = path[node_idx][0]
             # probability of arriving at this node
-            prob = path[node_idx][1]            
+            prob = path[node_idx][1]     
+            # compute the saliency map
             saliency_map = get_map(model, sample, node, tree_idx, name)
             if orientation == 'horizontal':
                 sub_plot_idx = sample_idx*(path_length + 1) + node_idx + 2
@@ -260,7 +291,6 @@ def get_path_saliency(samples, paths, class_pred, model, tree_idx, name, orienta
             else:
                 raise NotImplementedError
             plt.imshow(saliency_map)
-            #axe.set_title('(N{:d}, P{:.2f})'.format(node, prob), font_size=8)
             plt.title('(N{:d}, P{:.2f})'.format(node, prob))
             plt.axis('off')
         # draw some arrows 
