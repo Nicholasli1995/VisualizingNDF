@@ -37,6 +37,9 @@ For MNIST, run
 ```bash
 python main.py -dataset 'mnist' -epochs 50
 ```
+## License
+MIT
+
 ## Citation
 Please cite the paper in your publications if it helps your research:
 
