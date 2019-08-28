@@ -40,7 +40,7 @@ python main.py -dataset 'mnist' -epochs 50
 MIT
 
 ## Citation
-Please cite the paper in your publications if it helps your research:
+Please cite the related papers in your publications if they help your research:
 
     @InProceedings{Li_2019_CVPR_Workshops,
     author = {Li, Shichao and Cheng, Kwang-Ting},
@@ -50,6 +50,13 @@ Please cite the paper in your publications if it helps your research:
     year = {2019}
     }
     
+    @article{?,
+      title={Facial age estimation by deep residual decision making},
+      author={Li, Shichao and Cheng, Kwang-Ting},
+      journal={arXiv preprint arXiv:?},
+      year={2019}
+    }
+   
 Links to the paper:
 
 - [Visualizing the decision-making process in deep neural decision forest](http://openaccess.thecvf.com/content_CVPRW_2019/papers/Explainable%20AI/Li_Visualizing_the_Decision-making_Process_in_Deep_Neural_Decision_Forest_CVPRW_2019_paper.pdf)
