@@ -6,7 +6,7 @@ The repository contains pre-trained model and code for visualizing deep neural d
     <img src="images/mnist_results.png">
 </div>
 <div align="center">
-    <img src="images/cifar10_results.png">
+    <img src="images/cifar10_results.png", width="1440" height="800">
 </div>
 
 ## Results for Facial Age Estimation
