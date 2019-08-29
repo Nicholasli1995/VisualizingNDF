@@ -14,6 +14,7 @@ Note how the irrelevant texture (e.g. hair) is ignored by the model during the d
 <div align="center">
     <img src="images/cacd_final1.png">
 </div>
+
 ## Accuracy on CACD
 | Model             | Error        | Memory Usage | FLOPs
 | ----------------- | ----------- | ----------- | ----------- |
