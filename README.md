@@ -40,7 +40,7 @@ python main.py -dataset 'mnist' -epochs 50
 MIT
 
 ## Citation
-Please cite the related papers in your publications if they help your research:
+Please consider citing the related papers in your publications if they help your research:
 
     @InProceedings{Li_2019_CVPR_Workshops,
     author = {Li, Shichao and Cheng, Kwang-Ting},
