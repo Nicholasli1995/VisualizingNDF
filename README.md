@@ -14,6 +14,11 @@ Note how the irrelevant texture (e.g. hair) is ignored by the model during the d
 <div align="center">
     <img src="images/cacd_final1.png">
 </div>
+## Accuracy on CACD
+| Model             | Error        | Memory Usage | FLOPs
+| ----------------- | ----------- | ----------- |
+| [DRFs_CVPR 18'](https://github.com/shenwei1231/caffe-DeepRegressionForests)    | 4.637      | 539.4MB | 16G
+| [RNDF (Ours)](https://arxiv.org/abs/1908.10737)             | 4.595      | 112.4MB | 4G
 
 ## Requirements
 * Python 3.6 (not tested for other versions)
