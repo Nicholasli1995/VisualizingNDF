@@ -11,7 +11,7 @@ The repository contains pre-trained model and code for visualizing deep neural d
 
 ## Results for Facial Age Estimation
 <div align="center">
-    <img src="images/cacd_final1.png", width="1440" height="800">
+    <img src="images/cacd_final1.png">
 </div>
 
 ## Requirements
