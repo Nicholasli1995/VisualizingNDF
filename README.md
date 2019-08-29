@@ -1,5 +1,5 @@
 # VisualizingNDF
-The repository contains pre-trained model and code for visualizing deep neural decisoin forest. For now the classification models are released and you can contact me if you are interested in the regression models for face alignment. In addition, visualizing for a model trained for facial age estiamtion will be released soon, which achieved state-of-the-art accuracy and comsumes less memory. Finally, this repository is version 1.0 with more comments to write.
+The repository contains pre-trained models and code for visualizing deep neural decisoin forest. For now the classification models are released. Visualizing for a model trained for facial age estiamtion will be released soon, which achieved state-of-the-art accuracy and comsumes less memory. Finally, this repository is version 1.0 with more comments to write.
 
 ## Results for Image Classification
 <div align="center">
