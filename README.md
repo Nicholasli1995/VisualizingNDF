@@ -1,7 +1,7 @@
 # VisualizingNDF
 The repository contains pre-trained models and code for visualizing deep neural decisoin forest. For now the classification models are released. Visualizing for a model trained for facial age estiamtion will be released soon, which achieved state-of-the-art accuracy and comsumes less memory. Finally, this repository is version 1.0 with more comments to write.
 
-## Results for Image Classification
+## Decision making for Image Classification
 <div align="center">
     <img src="images/mnist_results.png">
 </div>
@@ -9,12 +9,13 @@ The repository contains pre-trained models and code for visualizing deep neural 
     <img src="images/cifar10_results.png">
 </div>
 
-## Results for Facial Age Estimation
+## Decision making for Facial Age Estimation
 Note how the irrelevant texture (e.g. hair) is ignored by the model during the decision making process.
 <div align="center">
     <img src="images/cacd_final1.png">
 </div>
 
+## Accuracy on Cross-Age Celebrity Dataset (CACD)
 | Model             | Error        | Memory Usage | FLOPs
 | ----------------- | ----------- | ----------- | ----------- |
 | [DRFs_CVPR 18'](https://github.com/shenwei1231/caffe-DeepRegressionForests)    | 4.637      | 539.4MB | 16G
