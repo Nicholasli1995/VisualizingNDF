@@ -10,6 +10,7 @@ The repository contains pre-trained model and code for visualizing deep neural d
 </div>
 
 ## Results for Facial Age Estimation
+Note how the irrelevant texture (e.g. hair) is ignored by the model during the decision making process.
 <div align="center">
     <img src="images/cacd_final1.png">
 </div>
