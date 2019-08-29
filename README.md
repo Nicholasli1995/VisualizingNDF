@@ -10,6 +10,7 @@ The repository contains pre-trained model and code for visualizing deep neural d
 <div align="center">
     <img src="images/cacd_final1.png">
 </div>
+
 ## Requirements
 * Python 3.6 (not tested for other versions)
 * PyTorch 1.0 
@@ -29,6 +30,8 @@ For MNIST, run
 ```bash
 python ndf_vis.py -dataset 'mnist'
 ```
+The code for visualizing NDF for facial age estimation is under final cleaning.
+
 ## Train
 To train a deep neural decision forest for CIFAR-10, use 
 ```bash
