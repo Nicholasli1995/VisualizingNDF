@@ -1,5 +1,5 @@
 # VisualizingNDF
-The repository contains pre-trained models and code for visualizing deep neural decisoin forest: 
+The repository contains pre-processed images, pre-trained models and code for visualizing deep neural decisoin forest: 
 1. The classification models are released. 
 2. A model trained for facial age estiamtion is also released, which achieved state-of-the-art accuracy on CACD dataset and comsumes less memory. 
 Finally, this repository is version 1.0 with more comments to write.
