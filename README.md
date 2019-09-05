@@ -52,7 +52,7 @@ To visualize NDF for CACD dataset:
 ```bash
 python ndf_vis.py 
 ```
-Sorry this part is currently not commented and please refer to the similar classification code for detailed comments. Future updates will introduce more comments.
+Sorry about the hard-coded paths and few comments. Please refer to the similar classification code for detailed comments for now. Future updates will introduce more comments.
 
 ## Training for Image Classification
 To train a deep neural decision forest for CIFAR-10, use 
