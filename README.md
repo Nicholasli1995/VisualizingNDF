@@ -29,7 +29,7 @@ Note how the irrelevant texture (e.g. hair) is ignored by the model during the d
 ## Requirements
 * Python 3.6 (not tested for other versions)
 * PyTorch 1.0 
-* CUDA
+* CUDA (Yet using CPU is possible if you want to modify the code)
 
 ## Pre-trained models
 You can download the pre-trained models at https://drive.google.com/drive/folders/1DM6wVSknkYBqGf1UwHQgJNUp40sYDMrv?usp=sharing and place them in the "pre-trained" folder.
