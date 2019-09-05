@@ -1,7 +1,9 @@
 # VisualizingNDF
 The repository contains pre-processed images, pre-trained models and code for visualizing deep neural decisoin forest: 
-1. The classification models are released. 
-2. A model trained for facial age estiamtion is also released, which achieved state-of-the-art accuracy on CACD dataset and comsumes less memory. 
+1. The classification models for MNIST and CIFAR-10 are released. 
+2. Pre-processed CACD dataset is released.
+2. A model trained for CACD dataset is released, which achieved state-of-the-art accuracy and comsumes less memory. 
+
 Finally, this repository is version 1.0 with more comments to write.
 
 ## Decision making for Image Classification
