@@ -1,5 +1,8 @@
 # VisualizingNDF
-The repository contains pre-trained models and code for visualizing deep neural decisoin forest. For now the classification models are released. Visualizing for a model trained for facial age estiamtion will be released soon, which achieved state-of-the-art accuracy and comsumes less memory. Finally, this repository is version 1.0 with more comments to write.
+The repository contains pre-trained models and code for visualizing deep neural decisoin forest: 
+1. The classification models are released. 
+2. A model trained for facial age estiamtion is also released, which achieved state-of-the-art accuracy on CACD dataset and comsumes less memory. 
+Finally, this repository is version 1.0 with more comments to write.
 
 ## Decision making for Image Classification
 <div align="center">
@@ -24,11 +27,12 @@ Note how the irrelevant texture (e.g. hair) is ignored by the model during the d
 ## Requirements
 * Python 3.6 (not tested for other versions)
 * PyTorch 1.0 
+* CUDA
 
 ## Pre-trained models
 You can download the pre-trained models at https://drive.google.com/drive/folders/1DM6wVSknkYBqGf1UwHQgJNUp40sYDMrv?usp=sharing and place them in the "pre-trained" folder.
 
-## Visualization
+## Visualization for Image Classification
 After downloading the pre-trained models, go to /src and
 simply run 
 ```bash
@@ -40,9 +44,17 @@ For MNIST, run
 ```bash
 python ndf_vis.py -dataset 'mnist'
 ```
-The code for visualizing NDF for facial age estimation is under final cleaning.
+## Visualization for Facial Age Estimation:
+To visualize NDF for CACD dataset:
+1. download the pre-processed images at https://drive.google.com/file/d/1OBu62cpnaMl5EX8EsjfEenRVv9rk3trt/view?usp=sharing and decompress it into the "data" folder.
+2. download metadata at https://drive.google.com/drive/folders/1s_Ml82O4FVkC34PCE4ttrYhta3EKeYdo?usp=sharing and place it under the "data" folder.
+3. go to /src/age_estimation and run
+```bash
+python ndf_vis.py 
+```
+Sorry this part is currently not commented and please refer to the similar classification code for detailed comments. Future updates will introduce more comments.
 
-## Train
+## Training for Image Classification
 To train a deep neural decision forest for CIFAR-10, use 
 ```bash
 python main.py
@@ -51,6 +63,10 @@ For MNIST, run
 ```bash
 python main.py -dataset 'mnist' -epochs 50
 ```
+
+## Training for Facial Age Estimation
+The training and testing code for facial age estimation will be released in a future update.
+
 ## License
 MIT
 
@@ -71,8 +87,17 @@ Please consider citing the related papers in your publications if they help your
       journal={arXiv preprint arXiv:1908.10737},
       year={2019}
     }
+    
+    @inproceedings{kontschieder2015deep,
+      title={Deep neural decision forests},
+      author={Kontschieder, Peter and Fiterau, Madalina and Criminisi, Antonio and Rota Bulo, Samuel},
+      booktitle={Proceedings of the IEEE international conference on computer vision},
+      pages={1467--1475},
+      year={2015}
+    }
 
 Links to the papers:
 
 - [Visualizing the decision-making process in deep neural decision forest](http://openaccess.thecvf.com/content_CVPRW_2019/papers/Explainable%20AI/Li_Visualizing_the_Decision-making_Process_in_Deep_Neural_Decision_Forest_CVPRW_2019_paper.pdf)
 - [Facial age estimation by deep residual decision making](https://arxiv.org/abs/1908.10737)
+- [Deep Neural Decision Forests](http://openaccess.thecvf.com/content_iccv_2015/papers/Kontschieder_Deep_Neural_Decision_ICCV_2015_paper.pdf)
