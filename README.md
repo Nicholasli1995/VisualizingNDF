@@ -46,8 +46,8 @@ python ndf_vis.py -dataset 'mnist'
 ```
 ## Visualization for Facial Age Estimation:
 To visualize NDF for CACD dataset:
-1. Download the pre-processed images at https://drive.google.com/file/d/1OBu62cpnaMl5EX8EsjfEenRVv9rk3trt/view?usp=sharing and decompress it into the "data" folder.
-2. Download metadata folder at https://drive.google.com/drive/folders/1s_Ml82O4FVkC34PCE4ttrYhta3EKeYdo?usp=sharing and place it under the "data" folder.
+1. Download the pre-processed images at https://drive.google.com/file/d/1OBu62cpnaMl5EX8EsjfEenRVv9rk3trt/view?usp=sharing and decompress it into the "/src/data" folder.
+2. Download metadata folder at https://drive.google.com/drive/folders/1s_Ml82O4FVkC34PCE4ttrYhta3EKeYdo?usp=sharing and place it under the "/src/data" folder.
 3. Go to /src/age_estimation and run
 ```bash
 python ndf_vis.py 
