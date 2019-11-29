@@ -114,12 +114,12 @@ def prepare_db(opt):
     if opt.dataset_name == "FGNET":
         raise NotImplementedError
     elif opt.dataset_name == "CACD":
-        eval_dic = np.load('../data/CACD_split/test_cacd_processed.npy').item()
+        eval_dic = np.load('../data/CACD_split/test_cacd_processed.npy', allow_pickle=True).item()
         if opt.cacd_train:
-            train_dic = np.load('../data/CACD_split/train_cacd_processed.npy').item()
+            train_dic = np.load('../data/CACD_split/train_cacd_processed.npy', allow_pickle=True).item()
             logging.info('Preparing CACD dataset (training with the training set).')
         else:
-            train_dic = np.load('../data/CACD_split/valid_cacd_processed.npy').item()
+            train_dic = np.load('../data/CACD_split/valid_cacd_processed.npy', allow_pickle=True).item()
             logging.info('Preparing CACD dataset (training with the validation set).')
         train_list.append(FacialAgeDataset(train_dic, opt, 'train'))
         eval_list.append(FacialAgeDataset(eval_dic, opt, 'eval'))

@@ -43,9 +43,9 @@ def get_counts(data_dic):
 
 def get_data(img_path):
     # pre-process the data for CACD
-    train_list = np.load('../data/CACD_split/train.npy')
-    valid_list = np.load('../data/CACD_split/valid.npy')
-    test_list = np.load('../data/CACD_split/test.npy')
+    train_list = np.load('../data/CACD_split/train.npy', allow_pickle=True)
+    valid_list = np.load('../data/CACD_split/valid.npy', allow_pickle=True)
+    test_list = np.load('../data/CACD_split/test.npy', allow_pickle=True)
     train_dic = get_dic(train_list, img_path)
     print('Training images: %d'%get_counts(train_dic))
     valid_dic = get_dic(valid_list, img_path)
@@ -158,7 +158,7 @@ def main():
 #    for i in tqdm(range(len(onlyfiles))):
 #        landmark_list.append(get_landmarks(onlyfiles[i], args))
 
-    landmark_ref = np.matrix(np.load('../data/CACD_mean_face.npy'))
+    landmark_ref = np.matrix(np.load('../data/CACD_mean_face.npy', allow_pickle=True))
     
     # Points used to line up the images.
     ALIGN_POINTS = list(range(16))
