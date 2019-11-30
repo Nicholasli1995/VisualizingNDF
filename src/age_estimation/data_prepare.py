@@ -1,7 +1,5 @@
 """
-This script prepares a dataset for facial age estimation.
-@Author: Shichao (Nicholas) Li
-Contact: nicholas.li@connect.ust.hk
+This script prepares a pytorch dataset for facial age estimation.
 """
 import torch
 import torch.utils.data
@@ -9,9 +7,7 @@ import torchvision.transforms.functional as transform_f
 import imageio as io
 import numpy as np
 import logging
-# use PIL
 import PIL
-
 
 class FacialAgeDataset(torch.utils.data.Dataset):
     def __init__(self, dictionary, opt, split):
@@ -50,41 +46,35 @@ class FacialAgeDataset(torch.utils.data.Dataset):
                      self.split, len(self.img_path_list)))                  
         self.label = torch.FloatTensor(self.label)
         self.label /= self.scale_factor
-        if opt.visualize:
-            self.visualize()
             
     def __len__(self):
         return len(self.img_path_list)
 
     def __getitem__(self, idx):
-        if self.cache:
-            raise NotImplementedError
-        else:
-            # read image from the disk
-            image_path = self.img_path_list[idx]
-            #image = io.imread(image_path)
-            image = PIL.Image.open(image_path)
-            # transformation for data augmentation
-            if self.transform:
-                # Use PIL and image augmentation provided by Pytorch
-                if np.random.rand() > 0.5 and self.split == 'train':
-                    image = transform_f.hflip(image)
-                # only crop if input image size is large enough
-                if self.crop_limit > 1:
-                    # random cropping
-                    if self.split == 'train':
-                        x_start = int(self.crop_limit*np.random.rand())
-                        y_start = int(self.crop_limit*np.random.rand())
-                    else:
-                        # only apply central-crop for evaluation set
-                        x_start = 15
-                        y_start = 15
-                    image = transform_f.crop(image, y_start, x_start, 
-                                             self.crop_size,
-                                             self.crop_size)
-            image = transform_f.to_tensor(image)
-            image = transform_f.normalize(image, mean=self.mean, 
-                                          std=self.std)                
+        # read image from the disk
+        image_path = self.img_path_list[idx]
+        image = PIL.Image.open(image_path)
+        # transformation for data augmentation
+        if self.transform:
+            # Use PIL and transformation provided by Pytorch
+            if np.random.rand() > 0.5 and self.split == 'train':
+                image = transform_f.hflip(image)
+            # only crop if input image size is large enough
+            if self.crop_limit > 1:
+                # random cropping
+                if self.split == 'train':
+                    x_start = int(self.crop_limit*np.random.rand())
+                    y_start = int(self.crop_limit*np.random.rand())
+                else:
+                    # only apply central-crop for evaluation set
+                    x_start = 15
+                    y_start = 15
+                image = transform_f.crop(image, y_start, x_start, 
+                                         self.crop_size,
+                                         self.crop_size)
+        image = transform_f.to_tensor(image)
+        image = transform_f.normalize(image, mean=self.mean, 
+                                      std=self.std)                
         sample = {'image': image, 
                   'age': self.label[idx], 
                   'index': idx}    
@@ -98,11 +88,11 @@ class FacialAgeDataset(torch.utils.data.Dataset):
         return img
     
     def get_label(self, idx):
-        # this function only returns the label (avoid image reading)
+        # this function only returns the label
         return self.label[idx]
     
     def get_image(self, idx):
-        # only returns the raw image
+        # returns the raw image with imageio
         image_path = self.img_path_list[idx]
         image = io.imread(image_path)
         return image
@@ -112,13 +102,17 @@ def prepare_db(opt):
     train_list = []
     eval_list = []
     if opt.dataset_name == "FGNET":
+        # not released for now
         raise NotImplementedError
     elif opt.dataset_name == "CACD":
+        # testing set
         eval_dic = np.load('../data/CACD_split/test_cacd_processed.npy').item()
         if opt.cacd_train:
+            # use the official training set for training
             train_dic = np.load('../data/CACD_split/train_cacd_processed.npy').item()
             logging.info('Preparing CACD dataset (training with the training set).')
         else:
+            # use the official evaluation set for training
             train_dic = np.load('../data/CACD_split/valid_cacd_processed.npy').item()
             logging.info('Preparing CACD dataset (training with the validation set).')
         train_list.append(FacialAgeDataset(train_dic, opt, 'train'))

@@ -1,10 +1,11 @@
+import resnet
+
 import torch
 import torch.nn as nn
-from torchvision import models
 from torch.nn.parameter import Parameter
 from collections import OrderedDict
 import numpy as np
-import resnet
+
 # smallest positive float number
 FLT_MIN = float(np.finfo(np.float32).eps)
 FLT_MAX = float(np.finfo(np.float32).max)
@@ -15,57 +16,33 @@ class FeatureLayer(nn.Sequential):
                  gray_scale = False):
         """
         Args:
-            model (string): type of model to be used.
+            model_type (string): type of model to be used.
             num_output (int): number of neurons in the last feature layer
+            input_size (int): input image size
             pretrained (boolean): whether to use a pre-trained model from ImageNet
+            gray_scale (boolean): whether the input is gray scale image
         """
         super(FeatureLayer, self).__init__()
         self.model_type = model_type
         self.num_output = num_output 
-        if self.model_type == 'resnet34':
-            resnet34 = models.resnet34()
-            if pretrained:
-                # load pre-trained model
-                resnet34.load_state_dict(torch.load("/home/nicholas/.torch/models/resnet34-333f7ec4.pth"))     
-            # replace the last layer
-            resnet34.fc = None
-            resnet34.fc = nn.Linear(512, self.num_output)
-            self.add_module('resnet34', resnet34)
-        elif self.model_type == 'resnet50':
-            resnet50 = models.resnet50()
-            if pretrained:
-                # load pre-trained model
-                resnet50.load_state_dict(torch.load("/home/nicholas/.torch/models/resnet50-19c8e357.pth"))     
-            # replace the last layer
-            resnet50.fc = None
-            resnet50.fc = nn.Linear(2048, self.num_output)
-            self.add_module('resnet50', resnet50)            
-        elif self.model_type == 'hier_res':
-            model = resnet.ResNet34(self.num_output, pretrained)
-            self.add_module('hier_res34', model)
-        elif self.model_type == 'hybrid':
+        if self.model_type == 'hybrid':
+            # a model using a resnet-like backbone is used for feature extraction 
             model = resnet.Hybridmodel(self.num_output)
             self.add_module('hybrid_model', model)
         else:
             raise NotImplementedError
 
     def get_out_feature_size(self):
-        if self.model_type == 'VGG16':
-            return self.num_output
-        elif self.model_type == 'resnet34':
-            return self.num_output
-        elif self.model_type == 'hier_res34':
-            return self.num_output
-        else:
-            raise NotImplementedError
+        return self.num_output
 
 class Tree(nn.Module):
-    def __init__(self, depth, feature_length, vector_length, use_cuda = False):
+    def __init__(self, depth, feature_length, vector_length, use_cuda = True):
         """
         Args:
             depth (int): depth of the neural decision tree.
             feature_length (int): number of neurons in the last feature layer
             vector_length (int): length of the mean vector stored at each tree leaf node
+            use_cuda (boolean): whether to use GPU
         """
         super(Tree, self).__init__()
         self.depth = depth
@@ -95,10 +72,6 @@ class Tree(nn.Module):
         self.factor = np.ones((self.n_leaf))       
         if not use_cuda:
             raise NotImplementedError
-            self.mean = Parameter(torch.from_numpy(self.mean).type(torch.FloatTensor), requires_grad=False)
-#            self.covmat = Parameter(torch.from_numpy(self.covmat).type(torch.FloatTensor), requires_grad=False)
-#            self.covmat_inv = Parameter(torch.from_numpy(self.covmat_inv).type(torch.FloatTensor), requires_grad=False)
-#            self.factor = Parameter(torch.from_numpy(self.factor).type(torch.FloatTensor), requires_grad=False)
         else:
             self.mean = Parameter(torch.from_numpy(self.mean).type(torch.FloatTensor).cuda(), requires_grad=False)
             self.covmat = Parameter(torch.from_numpy(self.covmat).type(torch.FloatTensor).cuda(), requires_grad=False)
@@ -109,22 +82,20 @@ class Tree(nn.Module):
     def forward(self, x, save_flag = False):
         """
         Args:
-            param x (Tensor): input feature batch of size [batch_size,n_features]
+            param x (Tensor): input feature batch of size [batch_size, n_features]
         Return:
-            (Tensor): routing probability of size [batch_size,n_leaf]
+            (Tensor): routing probability of size [batch_size, n_leaf]
         """ 
-        cache = {} # save some intermediate results for analysis
+        cache = {} 
         if x.is_cuda and not self.feature_mask.is_cuda:
             self.feature_mask = self.feature_mask.cuda()
-
-        feats = torch.mm(x, self.feature_mask) # ->[batch_size,n_leaf]
-        decision = self.decision(feats) # passed sigmoid->[batch_size,n_leaf]
-
-        decision = torch.unsqueeze(decision,dim=2) # ->[batch_size,n_leaf,1]
+        feats = torch.mm(x, self.feature_mask) 
+        decision = self.decision(feats) 
+        decision = torch.unsqueeze(decision,dim=2) 
         decision_comp = 1-decision
-        decision = torch.cat((decision,decision_comp),dim=2) # -> [batch_size,n_leaf,2]
-        # compute route probability
-        # note: we do not use decision[:,0]
+        decision = torch.cat((decision,decision_comp),dim=2) 
+        
+        # save some intermediate results for analysis if needed
         if save_flag:
             cache['decision'] = decision[:,:,0]           
         batch_size = x.size()[0]
@@ -133,7 +104,7 @@ class Tree(nn.Module):
         begin_idx = 1
         end_idx = 2
         for n_layer in range(0, self.depth):
-            # mu stores the probability a sample is routed at certain node
+            # mu stores the probability that a sample is routed to certain node
             # repeat it to be multiplied for left and right routing
             mu = mu.repeat(1, 1, 2)
             # the routing probability at n_layer
@@ -143,31 +114,24 @@ class Tree(nn.Module):
             end_idx = begin_idx + 2 ** (n_layer+1)
             # merge left and right nodes to the same layer
             mu = mu.view(batch_size, -1, 1)
-
         mu = mu.view(batch_size, -1)
+        
         if save_flag:
             cache['mu'] = mu
-        if save_flag:
             return mu, cache
         else:        
             return mu
 
     def pred(self, x):
-        """
-        Predict a vector based on stored vectors and routing probability
-        Args:
-            param x (Tensor): input feature batch of size [batch_size, feature_length]
-        Return: 
-            (Tensor): prediction [batch_size,vector_length]
-        """
         p = torch.mm(self(x), self.mean)
         return p
     
-    def update_label_distribution(self, target_batch):
+    def update_label_distribution(self, target_batch, check=False):
         """
-        compute new mean vector and covariance matrix based on a multivariate gaussian distribution 
+        fix the feature extractor of RNDF and update leaf node mean vectors and covariance matrices 
+        based on a multivariate gaussian distribution 
         Args:
-            param target_batch (Tensor): target batch of size [batch_size, vector_length]
+            param target_batch (Tensor): a batch of regression targets of size [batch_size, vector_length]
         """
         target_batch = torch.cat(target_batch, dim = 0)
         mu = torch.cat(self.mu_cache, dim = 0)
@@ -195,7 +159,7 @@ class Tree(nn.Module):
                 new_covmat[leaf_idx, :,:] = torch.mm(weights*(temp.transpose(0, 1)), temp)/(weights.sum())
                 # update cache (factor and inverse) for future use
                 new_covmat_inv[leaf_idx, :,:] = new_covmat[leaf_idx, :,:].inverse()
-                if new_covmat[leaf_idx, :,:].det() <= 0:
+                if check and new_covmat[leaf_idx, :,:].det() <= 0:
                     print('Warning: singular matrix %d'%leaf_idx)
                 new_factor[leaf_idx] = 1.0/max((torch.sqrt(new_covmat[leaf_idx, :,:].det())), FLT_MIN)
         # update parameters
@@ -204,33 +168,9 @@ class Tree(nn.Module):
         self.covmat_inv = Parameter(new_covmat_inv, requires_grad = False)
         self.factor = Parameter(new_factor, requires_grad = False) 
         return
-
-    def update_label_distribution_simple(self, target_batch):
-        """
-        compute new mean vector based on a simple update rule inspired from traditional regression tree 
-        Args:
-            param feat_batch (Tensor): feature batch of size [batch_size, feature_length]
-            param target_batch (Tensor): target batch of size [batch_size, vector_length]
-        """
-#        if self.is_cuda:
-#            # move tensors to GPU
-#            target_batch = target_batch.cuda()       
-        target_batch = torch.cat(target_batch, dim = 0)
-        mu = torch.cat(self.mu_cache, dim = 0)
-#        if self.is_cuda:
-#            # move tensors to GPU
-#            mu = mu.cuda()
-#            target_batch = target_batch.cuda()          
-        with torch.no_grad():
-            # compute routing leaf probability for this batch
-            #mu = self(feat_batch) + FLT_MIN # [batch_size, n_leaf]
-            # new_mean if a weighted sum of all training samples
-            new_mean = (torch.mm(target_batch.transpose(0, 1), mu)/(mu.sum(dim = 0).unsqueeze(0))).transpose(0, 1) # [n_leaf, vector_length]
-        # update parameters
-        self.mean = Parameter(new_mean, requires_grad = False)
-        return
     
 class Forest(nn.Module):
+    # a neural decision forest is an ensemble of neural decision trees
     def __init__(self, n_tree, tree_depth, feature_length, vector_length, use_cuda = False):
         super(Forest, self).__init__()
         self.trees = nn.ModuleList()
@@ -247,6 +187,7 @@ class Forest(nn.Module):
         cache = []
         for tree in self.trees:
             if save_flag:
+                # record some intermediate results
                 mu, cache_tree = tree(x, save_flag = True)
                 p = torch.mm(mu, tree.mean)
                 cache.append(cache_tree)
@@ -262,19 +203,14 @@ class Forest(nn.Module):
 
 class NeuralDecisionForest(nn.Module):
     def __init__(self, feature_layer, forest):
-        
         super(NeuralDecisionForest, self).__init__()
         self.feature_layer = feature_layer
         self.forest = forest
         
     def forward(self, x, debug = False, save_flag = False):
-        if self.feature_layer.model_type == 'vgg16':
-            feats = self.feature_layer(x)
-            reg_loss = 0
-        else:
-            feats, reg_loss = self.feature_layer(x)
-
+        feats, reg_loss = self.feature_layer(x)
         if save_flag:
+            # return some intermediate results
             pred, cache = self.forest(feats, save_flag = True)
             return pred, reg_loss, cache
         else:

@@ -4,7 +4,96 @@ import torch.nn.functional as F
 import matplotlib.pyplot as plt
 from torchvision import models
 
+class Hybrid(nn.Module):
+    # this feature extracor has a resnet50-like backbone, where the building
+    # blocks can be replaced if needed
+    def __init__(self, block, num_blocks = [6,8,12,6], replace = [False, False, 
+                 False, False], num_classes=10, attention=False):
+        # a resnet with optional simple attention
+        super(Hybrid, self).__init__()
+        self.sub_model = models.resnet50(pretrained=True)        
+        # repalce some building blocks if needed
+        # the default is no replacement
+        self.in_planes = 64
+        # first block
+        if replace[0]:
+            del self.sub_model.layer1
+            self.sub_model.layer1 = self._make_layer(block, 64, num_blocks[0], 
+                                                     stride=1)
+        # second block
+        if replace[1]:
+            del self.sub_model.layer2
+            self.sub_model.layer2 = self._make_layer(block, 128, num_blocks[1], 
+                                                     stride=2)
+        # third block
+        if replace[2]:
+            self.in_planes = 128
+            del self.sub_model.layer3
+            self.sub_model.layer3 = self._make_layer(block, 256, num_blocks[2], 
+                                                     stride=2)
+        # fourth block
+        if replace[3]:
+            self.in_planes = 256
+            del self.sub_model.layer4
+            self.sub_model.layer4 = self._make_layer(block, 512, num_blocks[3], 
+                                                     stride=2)
+        # re-initialize the FC layer
+        del self.sub_model.fc
+        # a two-layer fully-connected module
+        self.sub_model.fc = nn.Sequential(                    
+                    nn.Linear(2048, 2048),
+                    nn.ReLU(True),
+                    nn.Dropout(0.5),
+                    nn.Linear(2048, num_classes)) 
+        
+        # an optional spatial attention model        
+        self.attention = attention
+        if self.attention:
+            self.gamma1 = 0
+            self.gamma2 = 0
+            self.attention_model = nn.Conv2d(2048, 1, kernel_size=1, stride=1)                 
+                    
+    def _make_layer(self, block, planes, num_blocks, stride):
+        strides = [stride] + [1]*(num_blocks-1)
+        layers = []
+        for i in range(len(strides)):
+            stride = strides[i]
+            if i == 0:
+                block_ = BasicBlock
+            else:
+                block_ = block
+            layers.append(block_(self.in_planes, planes, stride))
+            self.in_planes = planes * block.expansion
+        return nn.Sequential(*layers)
+
+    def forward(self, x):
+        out = F.relu(self.sub_model.bn1(self.sub_model.conv1(x)))
+        out = self.sub_model.maxpool(out)
+        out = self.sub_model.layer1(out)
+        out = self.sub_model.layer2(out)
+        out = self.sub_model.layer3(out)
+        out = self.sub_model.layer4(out)
+        reg_loss = 0.
+        if self.attention:
+            # soft attention
+#            mask = torch.sigmoid(self.attention_model(out))
+#            out = out*mask
+            # hard attention
+            mask = torch.tanh(self.attention_model(out))
+            out = F.relu(out*mask)
+            reg_loss = self.gamma1*mask.mean() + self.gamma2*(1 - mask**2).mean()
+        out = self.sub_model.avgpool(out)
+        out = out.view(out.size(0), -1)
+        out = self.sub_model.fc(out)
+        return out, reg_loss
+
+def Hybridmodel(num_output):
+    # the default backbone is un-modified resnet50
+    return Hybrid(HierRes, [6,8,12,5], num_classes=num_output)
+#-----------------------------------------------------------------------------#
+#-----------------------------some deprecated functions-----------------------#
 class HierRes(nn.Module):
+    # a hierarchical block designed for less model parameters
     expansion = 1
     def __init__(self, in_channels, out_channels, stride=1):
         super(HierRes, self).__init__()
@@ -50,6 +139,7 @@ class HierRes(nn.Module):
         return out
 
 class Inception(nn.Module):
+    # inception module
     expansion = 1
     def __init__(self, in_channels, out_channels, stride=1):
         super(Inception, self).__init__()
@@ -84,7 +174,6 @@ class Inception(nn.Module):
     
 class BasicBlock(nn.Module):
     expansion = 1
-
     def __init__(self, in_planes, planes, stride=1):
         super(BasicBlock, self).__init__()
         self.conv1 = nn.Conv2d(in_planes, planes, kernel_size=3, stride=stride, padding=1, bias=False)
@@ -133,7 +222,6 @@ class Bottleneck(nn.Module):
         out += self.shortcut(x)
         out = F.relu(out)
         return out
-
 
 class ResNet(nn.Module):
     def __init__(self, block, num_blocks, num_classes=10):
@@ -197,14 +285,6 @@ def get_first_conv_layer():
     del temp_model
     return weight
 
-def test():
-    net = ResNet34(128)
-    y = net(torch.randn(1,3,224,224))
-    print(y.size())
-
-def normalize(tensor):
-    return (tensor/(tensor.max()-tensor.min()) + 1)/2
-
 def visualize_filters(weight):
     assert len(weight.shape) == 4
     assert weight.shape[1] == 3
@@ -213,89 +293,11 @@ def visualize_filters(weight):
     for filter_idx in range(weight.shape[0]):
         plt.subplot(row_num, col_num, filter_idx+1)
         plt.imshow(normalize(weight[filter_idx,:]).numpy().transpose((1,2,0)))
-    
-#-----------------------------------------------------------------------------#
-class Hybrid(nn.Module):
-    def __init__(self, block, num_blocks = [6,8,12,6], replace = [False, False, 
-                 False, False], num_classes=10, attention=False):
-        # a resnet with optional simple attention
-        super(Hybrid, self).__init__()
-        self.sub_model = models.resnet50(pretrained=True)        
-        # repalce some layers
-        self.in_planes = 64
-        # first block
-        if replace[0]:
-            del self.sub_model.layer1
-            self.sub_model.layer1 = self._make_layer(block, 64, num_blocks[0], 
-                                                     stride=1)
-        # second block
-        if replace[1]:
-            del self.sub_model.layer2
-            self.sub_model.layer2 = self._make_layer(block, 128, num_blocks[1], 
-                                                     stride=2)
-        # third block
-        if replace[2]:
-            self.in_planes = 128
-            del self.sub_model.layer3
-            self.sub_model.layer3 = self._make_layer(block, 256, num_blocks[2], 
-                                                     stride=2)
-        # fourth block
-        if replace[3]:
-            self.in_planes = 256
-            del self.sub_model.layer4
-            self.sub_model.layer4 = self._make_layer(block, 512, num_blocks[3], 
-                                                     stride=2)
-        # FC layer
-        del self.sub_model.fc
-        self.attention = attention
         
-        # a two-layer fully-connected module
-        self.sub_model.fc = nn.Sequential(                    
-                    nn.Linear(2048, 2048),
-                    nn.ReLU(True),
-                    nn.Dropout(0.5),
-                    nn.Linear(2048, num_classes)) 
-        
-        if attention:
-            self.gamma1 = 0
-            self.gamma2 = 0
-            self.attention_model = nn.Conv2d(2048, 1, kernel_size=1, stride=1)                 
-                    
-    def _make_layer(self, block, planes, num_blocks, stride):
-        strides = [stride] + [1]*(num_blocks-1)
-        layers = []
-        for i in range(len(strides)):
-            stride = strides[i]
-            # replacing the last X blocks
-            if i == 0:
-                block_ = BasicBlock
-            else:
-                block_ = block
-            layers.append(block_(self.in_planes, planes, stride))
-            self.in_planes = planes * block.expansion
-        return nn.Sequential(*layers)
+def test():
+    net = ResNet34(128)
+    y = net(torch.randn(1,3,224,224))
+    print(y.size())
 
-    def forward(self, x):
-        out = F.relu(self.sub_model.bn1(self.sub_model.conv1(x)))
-        out = self.sub_model.maxpool(out)
-        out = self.sub_model.layer1(out)
-        out = self.sub_model.layer2(out)
-        out = self.sub_model.layer3(out)
-        out = self.sub_model.layer4(out)
-        # 224 by 224 input, the output size is 7 by 7
-        reg_loss = 0
-        if self.attention:
-            # soft attention
-#            mask = torch.sigmoid(self.attention_model(out))
-#            out = out*mask
-            # hard attention
-            mask = torch.tanh(self.attention_model(out))
-            out = F.relu(out*mask)
-            reg_loss = self.gamma1*mask.mean() + self.gamma2*(1 - mask**2).mean()
-        out = self.sub_model.avgpool(out)
-        out = out.view(out.size(0), -1)
-        out = self.sub_model.fc(out)
-        return out, reg_loss
-
-def Hybridmodel(num_output):
-    return Hybrid(HierRes, [6,8,12,5], num_classes=num_output)
+def normalize(tensor):
+    return (tensor/(tensor.max()-tensor.min()) + 1)/2
