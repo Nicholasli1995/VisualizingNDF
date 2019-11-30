@@ -77,6 +77,7 @@ To test a pre-trained model for CACD, go to /src/age_estimation and run
 ```bash
 python main.py -evaluate True -test_model_path "Your Path"
 ```
+The released model should give a MAE of 4.59
 ## License
 MIT
 
