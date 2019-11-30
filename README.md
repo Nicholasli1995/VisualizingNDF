@@ -67,8 +67,16 @@ python main.py -dataset 'mnist' -epochs 50
 ```
 
 ## Training for Facial Age Estimation
-The training and testing code for facial age estimation will be released in a future update.
-
+To train RNDF for CACD dataset:
+The same step 1 and 2 for visualization.
+step 3. Go to /src/age_estimation and run
+```bash
+python main.py -train True
+```
+To test a pre-trained model for CACD, go to /src/age_estimation and run
+```bash
+python main.py -evaluate True -test_model_path "Your Path"
+```
 ## License
 MIT
 
