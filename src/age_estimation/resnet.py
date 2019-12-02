@@ -88,7 +88,7 @@ class Hybrid(nn.Module):
         return out, reg_loss
 
 def Hybridmodel(num_output):
-    # the default backbone is un-modified resnet50
+    # the default feature extractor is un-modified resnet50
     return Hybrid(HierRes, [6,8,12,5], num_classes=num_output)
 #-----------------------------------------------------------------------------#
 #-----------------------------some deprecated functions-----------------------#
