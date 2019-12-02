@@ -2,9 +2,7 @@
 The repository contains pre-processed images, pre-trained models and code for visualizing deep neural decisoin forest: 
 1. The classification models for MNIST and CIFAR-10 are released. 
 2. Pre-processed CACD dataset is released.
-2. A model trained for CACD dataset is released, which achieved state-of-the-art accuracy and comsumes less memory. 
-
-Finally, this repository is version 1.0 with more comments to write.
+2. A model (RNDF) trained on CACD dataset is released, which achieves state-of-the-art accuracy and comsumes less memory. 
 
 ## Decision making for Image Classification
 <div align="center">
@@ -68,13 +66,13 @@ python main.py -dataset 'mnist' -epochs 50
 
 ## Training for Facial Age Estimation (Beta)
 To train RNDF for CACD dataset:
-follow the same step 1 and 2 as in visualization for data preparation. Finally, go to /src/age_estimation and run
+follow the same step 1 and 2 as in visualization. Finally, go to /src/age_estimation and run
 ```bash
 python main.py -train True
 ```
-To test a pre-trained model for CACD, go to /src/age_estimation and run
+To test the pre-trained model on CACD, go to /src/age_estimation and run
 ```bash
-python main.py -evaluate True -test_model_path "Your Path"
+python main.py -evaluate True -test_model_path "../model/CACD_MAE_4.59.pth"
 ```
 The released model should give a MAE of 4.59
 ## License
