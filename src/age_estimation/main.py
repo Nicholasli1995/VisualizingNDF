@@ -73,8 +73,8 @@ def main():
             if exp_id != len(db['train']) - 1:
                 del model_train
         
-        np.save('./FGNET_MAE_res50_2048_2048_128.npy', np.array(best_MAEs))
-        np.save('./FGNET_last_MAE_res50_2048_2048_128.npy', np.array(last_MAEs))
+        #np.save('./MAE.npy', np.array(best_MAEs))
+        #np.save('./Last_MAE.npy', np.array(last_MAEs))
         # save the final trained model
         #utils.save_model(model_train, opt)
         
