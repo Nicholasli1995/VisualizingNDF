@@ -71,7 +71,7 @@ python main.py -train True
 ```
 To test the pre-trained model on CACD, go to /src/age_estimation and run
 ```bash
-python main.py -evaluate True -test_model_path "../model/CACD_MAE_4.59.pth"
+python main.py -evaluate True -test_model_path "YourPATH/CACD_MAE_4.59.pth"
 ```
 The released model should give a MAE of 4.59
 ## License
