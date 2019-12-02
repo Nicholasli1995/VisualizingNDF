@@ -30,7 +30,7 @@ Note how the irrelevant texture (e.g. hair) is ignored by the model during the d
 * CUDA (Yet using CPU is possible if you want to modify the code)
 
 ## Pre-trained models
-You can download the pre-trained models at https://drive.google.com/drive/folders/1DM6wVSknkYBqGf1UwHQgJNUp40sYDMrv?usp=sharing and place them in the "pre-trained" folder.
+You can download the pre-trained models [here](https://drive.google.com/drive/folders/1DM6wVSknkYBqGf1UwHQgJNUp40sYDMrv?usp=sharing) and place them in the "pre-trained" folder.
 
 ## Visualization for Image Classification
 After downloading the pre-trained models, go to /src and
@@ -46,8 +46,8 @@ python ndf_vis.py -dataset 'mnist'
 ```
 ## Visualization for Facial Age Estimation:
 To visualize NDF for CACD dataset:
-1. Download the pre-processed images at https://drive.google.com/file/d/1OBu62cpnaMl5EX8EsjfEenRVv9rk3trt/view?usp=sharing and decompress it into the "/src/data" folder.
-2. Download metadata folder at https://drive.google.com/drive/folders/1s_Ml82O4FVkC34PCE4ttrYhta3EKeYdo?usp=sharing and place it under the "/src/data" folder.
+1. Download the pre-processed images [here](https://drive.google.com/file/d/1OBu62cpnaMl5EX8EsjfEenRVv9rk3trt/view?usp=sharing) and decompress it into the "/src/data" folder.
+2. Download the metadata folder [here](https://drive.google.com/drive/folders/1s_Ml82O4FVkC34PCE4ttrYhta3EKeYdo?usp=sharing) and place it under "/src/data".
 3. Go to /src/age_estimation and run
 ```bash
 python ndf_vis.py 
