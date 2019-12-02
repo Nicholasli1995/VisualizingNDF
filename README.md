@@ -65,8 +65,7 @@ python main.py -dataset 'mnist' -epochs 50
 ```
 
 ## Training for Facial Age Estimation (Beta)
-To train RNDF for CACD dataset:
-follow the same step 1 and 2 as in visualization. Finally, go to /src/age_estimation and run
+To train a RNDF for CACD dataset, follow the same step 1 and 2 as in visualization. Finally, go to /src/age_estimation and run
 ```bash
 python main.py -train True
 ```
