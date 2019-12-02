@@ -18,7 +18,7 @@ Note how the irrelevant texture (e.g. hair) is ignored by the model during the d
     <img src="images/cacd_final1.png">
 </div>
 
-## Accuracy on Cross-Age Celebrity Dataset (CACD)
+## Performance on Cross-Age Celebrity Dataset (CACD)
 | Model             | Error        | Memory Usage | FLOPs
 | ----------------- | ----------- | ----------- | ----------- |
 | [DRFs (CVPR 2018)](https://github.com/shenwei1231/caffe-DeepRegressionForests)    | 4.637      | 539.4MB | 16G
