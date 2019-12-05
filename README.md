@@ -3,6 +3,7 @@ Neural decision forest (NDF) conducts inference by making decisions based on dee
 1. Classification models for MNIST and CIFAR-10. 
 2. Pre-processed CACD dataset.
 3. A new model (RNDF) trained on CACD, which achieves state-of-the-art accuracy while comsumes less memory. 
+
 (This repo's file structure is under modification...)
 ## Decision making for Image Classification
 <div align="center">
