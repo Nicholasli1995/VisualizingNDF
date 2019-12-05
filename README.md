@@ -1,8 +1,8 @@
 # VisualizingNDF
-The repository contains pre-processed images, pre-trained models and code for visualizing deep neural decisoin forest: 
-1. The classification models for MNIST and CIFAR-10 are released. 
-2. Pre-processed CACD dataset is released.
-2. A model (RNDF) trained on CACD dataset is released, which achieves state-of-the-art accuracy and comsumes less memory. 
+Neural decision forest (NDF) conducts inference by making decisions based on deep image features. The repository contains Pytorch implementation for training and visualizing NDF. Pre-processed images and pre-trained models are also included. Classical classification and regression problems are considered and specific contents include:  
+1. Classification models for MNIST and CIFAR-10. 
+2. Pre-processed CACD dataset.
+3. A new model (RNDF) trained on CACD, which achieves state-of-the-art accuracy while comsumes less memory. 
 
 ## Decision making for Image Classification
 <div align="center">
