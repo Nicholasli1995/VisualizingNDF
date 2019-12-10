@@ -158,7 +158,7 @@ def main():
 #    for i in tqdm(range(len(onlyfiles))):
 #        landmark_list.append(get_landmarks(onlyfiles[i], args))
 
-    landmark_ref = np.matrix(np.load('../data/CACD_mean_face.npy', allow_pickle=True))
+    landmark_ref = np.matrix(np.load('../data/CACD_split/CACD_mean_face.npy', allow_pickle=True))
     
     # Points used to line up the images.
     ALIGN_POINTS = list(range(16))
