@@ -6,7 +6,7 @@ Contents: This repository contains official Pytorch code for training and visual
 2. Facial age estimation on the large-scale Cross-Age Celebrity Dataset (CACD). Pre-processed data and a new model (RNDF) [2] is released. RNDF achieves state-of-the-art accuracy while comsumes less memory. 
 
 ## Example: decision-making for image classification
-The left-most column shows the input images. Each row visualizes one path from the root node towards the leaf node in a soft decision tree. Each image in the row represents the DSM [1] for one splitting node, where (Na, Pb) means the input arrives at node a with probability b. For example, the input arrives at the root node with probability 1 is indicated by (N1, 1.0). Each DSM highlights the spatial region that has larger influence on the corresponding splitting node. For example, the foreground object is more important for NDF when making decisions.  
+The left-most column shows the input images. Each row visualizes one path from the root node towards the leaf node in a soft decision tree. Each image in the row represents the DSM [1] for one splitting node, where (Na, Pb) means the input arrives at node a with probability b. For example, the input arrives at the root node with probability 1 is indicated by (N1, P1.0). Each DSM highlights the spatial region that has larger influence on the corresponding splitting node. For example, the foreground object is more important for NDF when making decisions.  
 <div align="center">
     <img src="teasers/mnist_results.png">
 </div>
