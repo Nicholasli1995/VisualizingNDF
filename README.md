@@ -1,10 +1,11 @@
 # VisualizingNDF
-Neural decision forest (NDF) conducts inference by making decisions based on deep image features. The repository contains Pytorch implementation for training and visualizing NDF. Pre-processed images and pre-trained models are also included. Classical classification and regression problems are considered and specific contents include:  
-1. Classification models for MNIST and CIFAR-10. 
-2. Pre-processed CACD dataset.
-3. A new model (RNDF) trained on CACD, which achieves state-of-the-art accuracy while comsumes less memory. 
+Background: Neural decision forest (NDF) combines the representation power of deep neural networks (DNNs) and the divide-and-conquer idea of traditional decision trees. It conducts inference by making decisions based on image features extracted by DNNs. This decision-making process can be traced and visualized with Decision Saliency Maps (DSMs), which highlight important regions of the input that influence the decision process more. 
 
-## Decision making for Image Classification
+Contents: This repository contains official Pytorch code for training and visualizing NDF. Pre-processed data and pre-trained models are also released. Both classification and regression problems are considered and specific tasks include:  
+1. Image classification for MNIST, CIFAR-10 and Nexperia semiconductor. The last is a Kaggle competition organized by MATH 6380O (Advanced Topics in Deep Learning) in HKUST. 
+2. Facial age estimation on the large-scale Cross-Age Celebrity Dataset (CACD). Pre-processed data and a new model (RNDF) is released. RNDF achieves state-of-the-art accuracy while comsumes less memory. 
+
+## Example: decision-making for image classification
 <div align="center">
     <img src="teasers/mnist_results.png">
 </div>
@@ -12,7 +13,7 @@ Neural decision forest (NDF) conducts inference by making decisions based on dee
     <img src="teasers/cifar10_results.png">
 </div>
 
-## Decision making for Facial Age Estimation
+## Example: decision-making for facial age estimation
 Note how the irrelevant texture (e.g. hair) is ignored by the model during the decision making process.
 <div align="center">
     <img src="teasers/cacd_final1.png">
@@ -24,15 +25,17 @@ Note how the irrelevant texture (e.g. hair) is ignored by the model during the d
 | [DRFs (CVPR 2018)](https://github.com/shenwei1231/caffe-DeepRegressionForests)    | 4.637      | 539.4MB | 16G
 | [RNDF (Ours)](https://arxiv.org/abs/1908.10737)             | 4.595      | 112.4MB | 4G
 
-## Requirements
+## Dependency
 * Python 3.6 (not tested for other versions)
 * PyTorch >= 1.0 
+* Matplotlib
+* Numpy
 * CUDA (CPU mode is not implemented)
 
 ## Pre-trained models
 You can download the pre-trained models [here](https://drive.google.com/drive/folders/1DM6wVSknkYBqGf1UwHQgJNUp40sYDMrv?usp=sharing) and place them in the "pre-trained" folder.
 
-## Visualization for Image Classification
+## Usage: visualizing pre-trained NDF for image classification
 After downloading the pre-trained models, go to /classification and
 run 
 ```bash
@@ -44,7 +47,7 @@ For MNIST, run
 ```bash
 python ndf_vis.py -dataset 'mnist'
 ```
-## Visualization for Facial Age Estimation:
+## Usage: visualizing pre-trained RNDF for facial age estimation
 To visualize NDF for CACD dataset:
 1. Download the pre-processed images [here](https://drive.google.com/file/d/1OBu62cpnaMl5EX8EsjfEenRVv9rk3trt/view?usp=sharing) and decompress it into the "/data" folder.
 2. Download the metadata folder [here](https://drive.google.com/drive/folders/1s_Ml82O4FVkC34PCE4ttrYhta3EKeYdo?usp=sharing) and place it under "/data".
@@ -54,7 +57,7 @@ python ndf_vis.py
 ```
 Please refer to the classification counterpart for detailed comments. Future updates will introduce more comments for regression.
 
-## Training for Image Classification
+## Usage: training NDF for image classification
 To train a deep neural decision forest for CIFAR-10, go to /classification and run 
 ```bash
 python main.py
@@ -64,7 +67,7 @@ For MNIST, run
 python main.py -dataset 'mnist' -epochs 50
 ```
 
-## Training for Facial Age Estimation
+## Usage: training NDF for facial age estimation
 To train a RNDF (R stands for residual) for CACD dataset, follow the same step 1 and 2 as in visualization. Finally, go to /regression and run
 ```bash
 python main.py -train True
@@ -74,6 +77,7 @@ To test the pre-trained model on CACD, go to /regression and run
 python main.py -evaluate True -test_model_path "YourPATH/CACD_MAE_4.59.pth"
 ```
 The released model should give a MAE of 4.59
+
 ## License
 MIT
 

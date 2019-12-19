@@ -49,6 +49,9 @@ dataset = db['eval']
 # utils.get_node_saliency_map(dataset, model, tree_idx, node_idx, name=opt.dataset)
 # ==================================================================================
 
+# use the first tree in the forest (change to others if you like)
+tree_idx = 0
+
 # get the computational paths for the some random inputs
 sample, paths, class_pred = utils.get_paths(dataset, model, tree_idx, name=opt.dataset)
 

@@ -41,7 +41,7 @@ if opt.dataset_name == 'Morph':
     # For now I can not release my pre-processed dataset without permission.
     raise ValueError
 elif opt.dataset_name == 'CACD':
-    model_path = "../../pre-trained/CACD_MAE_4.59.pth"
+    model_path = "../pre-trained/CACD_MAE_4.59.pth"
 else:
     raise NotImplementedError
 
