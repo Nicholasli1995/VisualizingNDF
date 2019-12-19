@@ -1,11 +1,12 @@
 # VisualizingNDF
-Background: Neural decision forest (NDF) combines the representation power of deep neural networks (DNNs) and the divide-and-conquer idea of traditional decision trees. It conducts inference by making decisions based on image features extracted by DNNs. This decision-making process can be traced and visualized with Decision Saliency Maps (DSMs), which highlight important regions of the input that influence the decision process more. 
+Background: Neural decision forest (NDF) [3] combines the representation power of deep neural networks (DNNs) and the divide-and-conquer idea of traditional decision trees. It conducts inference by making decisions based on image features extracted by DNNs. This decision-making process can be traced and visualized with Decision Saliency Maps (DSMs) [1], which highlight important regions of the input that influence the decision process more. 
 
 Contents: This repository contains official Pytorch code for training and visualizing NDF. Pre-processed data and pre-trained models are also released. Both classification and regression problems are considered and specific tasks include:  
-1. Image classification for MNIST, CIFAR-10 and Nexperia semiconductor. The last is a Kaggle competition organized by MATH 6380O (Advanced Topics in Deep Learning) in HKUST. 
-2. Facial age estimation on the large-scale Cross-Age Celebrity Dataset (CACD). Pre-processed data and a new model (RNDF) is released. RNDF achieves state-of-the-art accuracy while comsumes less memory. 
+1. Image classification for MNIST, CIFAR-10 and Nexperia semiconductor. The last is a Kaggle competition organized by [MATH 6380O (Advanced Topics in Deep Learning)](https://deeplearning-math.github.io/) in HKUST. 
+2. Facial age estimation on the large-scale Cross-Age Celebrity Dataset (CACD). Pre-processed data and a new model (RNDF) [2] is released. RNDF achieves state-of-the-art accuracy while comsumes less memory. 
 
 ## Example: decision-making for image classification
+The left-most column shows the input images. Each row visualizes one path from the root node towards the leaf node in a soft decision tree. Each image in the row represents the DSM [1] for one splitting node, where (Na, Pb) means the input arrives at node a with probability b. For example, the input arrives at the root node with probability 1 is indicated by (N1, 1.0). Each DSM highlights the spatial region that has larger influence on the corresponding splitting node. For example, the foreground object is more important for NDF when making decisions.  
 <div align="center">
     <img src="teasers/mnist_results.png">
 </div>
@@ -14,7 +15,7 @@ Contents: This repository contains official Pytorch code for training and visual
 </div>
 
 ## Example: decision-making for facial age estimation
-Note how the irrelevant texture (e.g. hair) is ignored by the model during the decision making process.
+Note how the irrelevant texture (e.g. hair) is ignored by NDF during its decision making process.
 <div align="center">
     <img src="teasers/cacd_final1.png">
 </div>
@@ -109,6 +110,6 @@ Please consider citing the related papers in your publications if they help your
 
 Links to the papers:
 
-- [Visualizing the decision-making process in deep neural decision forest](http://openaccess.thecvf.com/content_CVPRW_2019/papers/Explainable%20AI/Li_Visualizing_the_Decision-making_Process_in_Deep_Neural_Decision_Forest_CVPRW_2019_paper.pdf)
-- [Facial age estimation by deep residual decision making](https://arxiv.org/abs/1908.10737)
-- [Deep neural decision forests](http://openaccess.thecvf.com/content_iccv_2015/papers/Kontschieder_Deep_Neural_Decision_ICCV_2015_paper.pdf)
+1. [Visualizing the decision-making process in deep neural decision forest](http://openaccess.thecvf.com/content_CVPRW_2019/papers/Explainable%20AI/Li_Visualizing_the_Decision-making_Process_in_Deep_Neural_Decision_Forest_CVPRW_2019_paper.pdf)
+2. [Facial age estimation by deep residual decision making](https://arxiv.org/abs/1908.10737)
+3. [Deep neural decision forests](http://openaccess.thecvf.com/content_iccv_2015/papers/Kontschieder_Deep_Neural_Decision_ICCV_2015_paper.pdf)
