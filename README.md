@@ -4,19 +4,18 @@ Neural decision forest (NDF) conducts inference by making decisions based on dee
 2. Pre-processed CACD dataset.
 3. A new model (RNDF) trained on CACD, which achieves state-of-the-art accuracy while comsumes less memory. 
 
-(This repo's file structure is under modification...)
 ## Decision making for Image Classification
 <div align="center">
-    <img src="images/mnist_results.png">
+    <img src="teasers/mnist_results.png">
 </div>
 <div align="center">
-    <img src="images/cifar10_results.png">
+    <img src="teasers/cifar10_results.png">
 </div>
 
 ## Decision making for Facial Age Estimation
 Note how the irrelevant texture (e.g. hair) is ignored by the model during the decision making process.
 <div align="center">
-    <img src="images/cacd_final1.png">
+    <img src="teasers/cacd_final1.png">
 </div>
 
 ## Performance on Cross-Age Celebrity Dataset (CACD)
@@ -27,15 +26,15 @@ Note how the irrelevant texture (e.g. hair) is ignored by the model during the d
 
 ## Requirements
 * Python 3.6 (not tested for other versions)
-* PyTorch 1.0 
-* CUDA (Yet using CPU is possible if you want to modify the code)
+* PyTorch >= 1.0 
+* CUDA (CPU mode is not implemented)
 
 ## Pre-trained models
 You can download the pre-trained models [here](https://drive.google.com/drive/folders/1DM6wVSknkYBqGf1UwHQgJNUp40sYDMrv?usp=sharing) and place them in the "pre-trained" folder.
 
 ## Visualization for Image Classification
-After downloading the pre-trained models, go to /src and
-simply run 
+After downloading the pre-trained models, go to /classification and
+run 
 ```bash
 python ndf_vis.py 
 ```
@@ -47,16 +46,16 @@ python ndf_vis.py -dataset 'mnist'
 ```
 ## Visualization for Facial Age Estimation:
 To visualize NDF for CACD dataset:
-1. Download the pre-processed images [here](https://drive.google.com/file/d/1OBu62cpnaMl5EX8EsjfEenRVv9rk3trt/view?usp=sharing) and decompress it into the "/src/data" folder.
-2. Download the metadata folder [here](https://drive.google.com/drive/folders/1s_Ml82O4FVkC34PCE4ttrYhta3EKeYdo?usp=sharing) and place it under "/src/data".
-3. Go to /src/age_estimation and run
+1. Download the pre-processed images [here](https://drive.google.com/file/d/1OBu62cpnaMl5EX8EsjfEenRVv9rk3trt/view?usp=sharing) and decompress it into the "/data" folder.
+2. Download the metadata folder [here](https://drive.google.com/drive/folders/1s_Ml82O4FVkC34PCE4ttrYhta3EKeYdo?usp=sharing) and place it under "/data".
+3. Go to /regression and run
 ```bash
 python ndf_vis.py 
 ```
-Sorry about the hard-coded paths and few comments. Please refer to the similar classification code for detailed comments for now. Future updates will introduce more comments.
+Please refer to the classification counterpart for detailed comments. Future updates will introduce more comments for regression.
 
 ## Training for Image Classification
-To train a deep neural decision forest for CIFAR-10, use 
+To train a deep neural decision forest for CIFAR-10, go to /classification and run 
 ```bash
 python main.py
 ```
@@ -66,11 +65,11 @@ python main.py -dataset 'mnist' -epochs 50
 ```
 
 ## Training for Facial Age Estimation
-To train a RNDF for CACD dataset, follow the same step 1 and 2 as in visualization. Finally, go to /src/age_estimation and run
+To train a RNDF (R stands for residual) for CACD dataset, follow the same step 1 and 2 as in visualization. Finally, go to /regression and run
 ```bash
 python main.py -train True
 ```
-To test the pre-trained model on CACD, go to /src/age_estimation and run
+To test the pre-trained model on CACD, go to /regression and run
 ```bash
 python main.py -evaluate True -test_model_path "YourPATH/CACD_MAE_4.59.pth"
 ```
