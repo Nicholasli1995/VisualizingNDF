@@ -9,7 +9,11 @@ import torch
 # class name for CIFAR-10 dataset
 cifar10_class_name = ['airplane', 'automobile', 'bird', 'cat', 'deer', 'dog', 
                       'frog', 'horse', 'ship', 'truck']
-
+mnist_class_name = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
+nexperia_class_name = ['good', 'bad']
+class_names = {'mnist': mnist_class_name,
+               'cifar10': cifar10_class_name,
+               'Nexperia': nexperia_class_name}
 def show_data(dataset, name):
     """
     show some image from the dataset.
@@ -49,7 +53,7 @@ def get_sample(dataset, sample_num, name):
     """
     # get random indices
     indices = np.random.choice(list(range(len(dataset))), sample_num)
-    if name in ['mnist', 'cifar10']:
+    if name in ['mnist', 'cifar10', 'Nexperia']:
         # for MNIST and CIFAR-10 dataset
         sample = [dataset[indices[i]][0].unsqueeze(0) for i in range(len(indices))]
         # concatenate the samples as one tensor
@@ -73,6 +77,8 @@ def revert_preprocessing(data_tensor, name):
         data_tensor[:,0,:,:] = data_tensor[:,0,:,:]*0.2023 + 0.4914     
         data_tensor[:,1,:,:] = data_tensor[:,1,:,:]*0.1994 + 0.4822      
         data_tensor[:,2,:,:] = data_tensor[:,2,:,:]*0.2010 + 0.4465      
+    elif name == 'Nexperia':
+        data_tensor = data_tensor*0.1657 + 0.2484
     else:
         raise NotImplementedError
     return data_tensor
@@ -86,7 +92,7 @@ def normalize(gradient, name):
     return:
         gradient: normalized gradient tensor
     """
-    if name == 'mnist':
+    if name in ['mnist', 'Nexperia']:
         pass
     elif name == 'cifar10':
         # take the maximum gradient from the 3 channels
@@ -97,7 +103,7 @@ def normalize(gradient, name):
     min_gradient = torch.min(gradient.view(len(gradient), -1), dim=1)[0]
     min_gradient = min_gradient.view(len(gradient), 1, 1, 1)    
     # do normalization
-    gradient = (gradient - min_gradient)/(max_gradient - min_gradient)    
+    gradient = (gradient - min_gradient)/(max_gradient - min_gradient + 1e-3)    
     return gradient
 
 def trace(record):
@@ -148,7 +154,7 @@ def get_paths(dataset, model, tree_idx, name):
     class_pred = pred.max(dim=1)[1]
     # for now use the first tree by cache[0]
     # please refer to ndf.py if you are interested in how the forward pass is implemented
-    decision = cache[0]['decision'].data.cpu().numpy()
+    decision = cache[tree_idx]['decision'].data.cpu().numpy()
     paths = []
     # trace the computational path for every input image
     for sample_idx in range(len(decision)):
@@ -266,12 +272,11 @@ def get_path_saliency(samples, paths, class_pred, model, tree_idx, name, orienta
         plt.subplot(num_samples, path_length + 1, sample_idx*(path_length + 1) + 1)
         # unnormalize the input
         sample_to_plot = revert_preprocessing(sample.unsqueeze(dim=0), name)
-        if name == 'mnist':
+        if name in ['mnist', 'Nexperia']:
             plt.imshow(sample_to_plot.squeeze().cpu().numpy(), cmap='gray')
-            pred_class_name = str(int(class_pred[sample_idx]))
         else:
             plt.imshow(sample_to_plot.squeeze().cpu().numpy().transpose((1,2,0)))            
-            pred_class_name = cifar10_class_name[int(class_pred[sample_idx])]
+        pred_class_name = class_names[name][int(class_pred[sample_idx])]
         plt.axis('off')        
         plt.title('Pred:{:s}'.format(pred_class_name))
         # computational path for this sample

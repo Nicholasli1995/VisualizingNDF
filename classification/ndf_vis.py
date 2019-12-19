@@ -13,9 +13,15 @@ def parse_arg():
     """
     parser = argparse.ArgumentParser(description='ndf_vis.py')
     # which dataset to use, mnist or cifar10
-    parser.add_argument('-dataset', choices=['mnist','cifar10'], default='cifar10')
+    parser.add_argument('-dataset', choices=['mnist', 'cifar10', 'Nexperia'], default='cifar10')
     # which GPU to use
     parser.add_argument('-gpuid', type=int, default=0)
+    # root path for Nexperia dataset
+    parser.add_argument('-nexperia_root', type=str, default='../data/Nexperia/semi-conductor-image-classification-first')    
+    # use all images from Nexperia dataset
+    parser.add_argument('-train_all', type=bool, default=False)    
+    # if not, specify the used fraction for Nexperia dataset
+    parser.add_argument('-train_ratio', type=float, default=0.9) 
     return parser.parse_args()
 
 # parse arguments
@@ -29,6 +35,8 @@ if opt.dataset == 'mnist':
     model_path = "../pre-trained/mnist_depth_9_tree_1_acc_0.993.pth"
 elif opt.dataset == 'cifar10':
     model_path = "../pre-trained/cifar10_depth_9_tree_1_ResNet50_acc_0.9341.pth"
+elif opt.dataset == 'Nexperia':
+    model_path = "../pre-trained/nexperia_depth_9_tree_1_resnet50_acc_0.955.pth"
 else:
     raise NotImplementedError
 
@@ -49,7 +57,7 @@ dataset = db['eval']
 # utils.get_node_saliency_map(dataset, model, tree_idx, node_idx, name=opt.dataset)
 # ==================================================================================
 
-# use the first tree in the forest (change to others if you like)
+# visualize for the first tree (modify to others if needed)
 tree_idx = 0
 
 # get the computational paths for the some random inputs
