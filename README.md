@@ -85,12 +85,12 @@ MIT
 ## Citation
 Please consider citing the related papers in your publications if they help your research:
 
-    @InProceedings{Li_2019_CVPR_Workshops,
-    author = {Li, Shichao and Cheng, Kwang-Ting},
-    title = {Visualizing the Decision-making Process in Deep Neural Decision Forest},
-    booktitle = {The IEEE Conference on Computer Vision and Pattern Recognition (CVPR) Workshops},
-    month = {June},
-    year = {2019}
+    @inproceedings{li2019visualizing,
+      title={Visualizing the Decision-making Process in Deep Neural Decision Forest},
+      author={Li, Shichao and Cheng, Kwang-Ting},
+      booktitle={Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR) Workshops},
+      pages={114--117},
+      year={2019}
     }
     
     @article{li2019facial,
