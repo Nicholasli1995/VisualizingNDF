@@ -50,7 +50,7 @@ python ndf_vis.py -dataset 'mnist'
 ```
 ## Usage: visualizing pre-trained RNDF for facial age estimation
 To visualize NDF for CACD dataset:
-1. Download the pre-processed images [here](https://drive.google.com/file/d/1OBu62cpnaMl5EX8EsjfEenRVv9rk3trt/view?usp=sharing) and decompress it into the "/data" folder.
+1. Download the pre-processed images [here](https://drive.google.com/file/d/1_xb5E_f_vmfZN_9ymmrBhZQVKdaAsubj/view?usp=sharing) and decompress it into the "/data" folder.
 2. Download the metadata folder [here](https://drive.google.com/drive/folders/1s_Ml82O4FVkC34PCE4ttrYhta3EKeYdo?usp=sharing) and place it under "/data".
 3. Go to /regression and run
 ```bash
